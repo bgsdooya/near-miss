@@ -7,7 +7,7 @@
    ※ service_role / secret 키는 절대 넣지 마세요.
    ============================================================ */
 window.NM_CONFIG = {
-  SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR-ANON-KEY',
+  SUPABASE_URL: 'https://kcavnuyxhbjqgzypcqya.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_FALjDjHkqdFrYy9PI_7p_g_UdVNH3Aq',
   UNIT: 'rehab'          // 입력 화면의 기본 부서 (병원 확대 시 ?u=부서코드 로 지정 가능)
 };
