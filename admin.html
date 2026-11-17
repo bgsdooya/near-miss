@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#14669C">
+<title>아차사고 관리 · 양산제일병원</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#14669C; --brand-dark:#0F4F7A; --brand-soft:#E3F0F8;
+  --accent:#FCBF43; --accent-soft:#FFF4D6;
+  --danger:#B3261E; --danger-soft:#FCEBEA;
+  --ink:#14262F; --muted:#52646E; --line:#CCD9E2; --bg:#F3F7FA; --card:#fff;
+  --bar:#14669C; --track:#E6EDF2;
+}
+*{box-sizing:border-box}
+html{font-size:17px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 3rem}
+[hidden]{display:none !important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* 상단 */
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px}
+.logo img{display:block;height:50px;width:auto;mix-blend-mode:multiply}
+.logo .ttl{font-weight:800;color:var(--brand-dark);font-size:1.15rem}
+.who{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.btn{min-height:44px;padding:0 14px;border-radius:10px;border:2px solid var(--brand);background:#fff;color:var(--brand-dark);font:inherit;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.small{min-height:44px;font-size:.9rem}
+.btn:disabled{opacity:.6;cursor:default}
+
+/* 탭 */
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin:4px 0 14px;overflow-x:auto}
+.tab{min-height:46px;padding:0 16px;border:0;border-bottom:4px solid transparent;background:none;font:inherit;font-weight:700;color:var(--muted);cursor:pointer;margin-bottom:-2px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--brand-dark);border-bottom-color:var(--brand)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{font-size:1.05rem;margin:0 0 .6rem}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+
+/* 입력 요소 */
+select,input[type=text],input[type=email],input[type=password],input[type=month],textarea{
+  font:inherit;min-height:44px;padding:.45rem .6rem;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+textarea{width:100%;min-height:5rem;resize:vertical}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px}
+.controls label,.field{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);gap:3px;font-weight:600}
+.field{font-size:.85rem;margin-bottom:.7rem}
+.field input,.field select{width:100%}
+
+/* 로그인 */
+.login{max-width:420px;margin:2rem auto}
+.login h1{font-size:1.3rem;color:var(--brand-dark);margin:.2rem 0 .3rem}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0;font-size:.92rem}
+.banner{background:var(--danger-soft);border-left:5px solid var(--danger);padding:.7rem .8rem;border-radius:8px;margin-bottom:12px}
+.notice{background:var(--accent-soft);border-left:5px solid var(--accent);padding:.7rem .8rem;border-radius:8px;margin-bottom:12px}
+
+/* 반복 알림 */
+.alerts{display:flex;flex-wrap:wrap;gap:8px;margin-top:.5rem}
+.alert-btn{min-height:44px;padding:.3rem .8rem;border-radius:999px;border:2px solid var(--accent);background:#fff;font:inherit;font-weight:700;color:#7A5600;cursor:pointer}
+
+/* 목록 */
+.row{display:grid;grid-template-columns:7.2rem 1fr auto;gap:12px;align-items:start;width:100%;text-align:left;
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;font:inherit;color:inherit;cursor:pointer}
+.row:hover{border-color:var(--brand)}
+.row .no{font-weight:800;color:var(--brand-dark)}
+.row .dt{font-size:.78rem;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.3rem}
+.tag{display:inline-block;padding:.05rem .55rem;border-radius:999px;background:var(--brand-soft);color:var(--brand-dark);font-size:.8rem;font-weight:700}
+.tag.type{background:#EEF2F5;color:#33444D}
+.tag.harm{background:var(--danger-soft);color:var(--danger)}
+.sit{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.chip{display:inline-block;padding:.15rem .7rem;border-radius:999px;font-size:.82rem;font-weight:800;white-space:nowrap;border:1px solid transparent}
+.s-recv{background:#FFF4D6;color:#7A5600;border-color:#FCBF43}
+.s-prog{background:#E3F0F8;color:#0F4F7A;border-color:#9CC3DD}
+.s-fwd{background:#FDE8DC;color:#8A3A0F;border-color:#F3A877}
+.s-done{background:#E9EEF1;color:#3F4F58;border-color:#C5D0D6}
+.empty{text-align:center;color:var(--muted);padding:2rem 0}
+
+/* 통계 */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi .v{font-size:1.9rem;font-weight:800;color:var(--brand-dark);line-height:1.1}
+.kpi .l{font-size:.82rem;color:var(--muted);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bars{display:grid;gap:8px}
+.brow{display:grid;grid-template-columns:7.5rem 1fr 2.4rem;gap:8px;align-items:center;font-size:.92rem}
+.brow .lab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:14px;background:var(--track);border-radius:0 4px 4px 0;overflow:hidden}
+.fill{height:100%;background:var(--bar);border-radius:0 4px 4px 0;min-width:0}
+.brow .n{text-align:right;font-weight:800}
+.trend{display:flex;align-items:flex-end;gap:10px;height:190px;padding-top:6px;border-bottom:2px solid var(--line)}
+.tcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.tcol .tn{font-weight:800;font-size:.9rem;margin-bottom:3px}
+.tcol .tb{width:min(34px,70%);background:var(--bar);border-radius:4px 4px 0 0}
+.tlabels{display:flex;gap:10px;margin-top:6px}
+.tlabels span{flex:1;text-align:center;font-size:.8rem;color:var(--muted)}
+
+/* 상세 */
+.modal{position:fixed;inset:0;background:rgba(10,30,40,.5);display:none;align-items:center;justify-content:center;z-index:20;padding:12px}
+.modal.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:720px;max-height:94vh;overflow:auto;border-radius:16px;padding:18px}
+.sheet h3{margin:0 0 .6rem;font-size:1.2rem}
+.sum{display:grid;grid-template-columns:5.5rem 1fr;gap:.35rem .8rem;margin:0 0 .8rem}
+.sum dt{color:var(--muted);font-weight:600}
+.sum dd{margin:0;word-break:break-word;white-space:pre-wrap}
+.hr{border:0;border-top:1px solid var(--line);margin:1rem 0}
+.hist{list-style:none;margin:0;padding:0;font-size:.88rem}
+.hist li{padding:.35rem 0;border-bottom:1px dashed var(--line)}
+.hist .t{color:var(--muted);margin-right:.5rem}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:.6rem}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--brand-dark);color:#fff;padding:.7rem 1.1rem;border-radius:12px;font-weight:700;z-index:40}
+
+/* 월간 요약 (종이 문서) */
+.sumdoc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}
+.sumdoc .head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--brand);padding-bottom:12px;margin-bottom:14px}
+.sumdoc .head img{height:46px;width:auto}
+.sumdoc h2{margin:0;font-size:1.35rem;color:var(--brand-dark)}
+.sumdoc h4{margin:1.1rem 0 .4rem;font-size:1rem;color:var(--brand-dark)}
+.sumdoc table{border-collapse:collapse;width:100%;font-size:.92rem}
+.sumdoc th,.sumdoc td{border:1px solid var(--line);padding:.35rem .6rem;text-align:left;vertical-align:top}
+.sumdoc th{background:var(--brand-soft);color:var(--brand-dark);width:30%}
+.case{border-left:4px solid var(--brand);padding:.3rem .7rem;margin:.4rem 0;background:#F8FBFD}
+.case .a{font-weight:700}
+
+@media (max-width:720px){
+  .row{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .brow{grid-template-columns:6rem 1fr 2.2rem}
+  .sumdoc{padding:14px}
+}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;font-size:12pt}
+  header.top,.tabs,.controls,.noprint,.toast{display:none !important}
+  #tab-list,#tab-stats{display:none !important}
+  .wrap{max-width:none;padding:0}
+  .sumdoc{border:0;padding:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="logo">
+      <img src="assets/logo-horizontal.png" alt="양산제일병원" onerror="this.hidden=true">
+      <span class="ttl">아차사고 관리</span>
+    </div>
+    <div class="who" id="who" hidden>
+      <span id="whoText"></span>
+      <button type="button" class="btn small" id="refreshBtn">새로고침</button>
+      <button type="button" class="btn small" id="logoutBtn">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="banner" id="fatal" hidden></div>
+
+  <!-- 로그인 -->
+  <section class="card login" id="login" hidden>
+    <h1>직원 로그인</h1>
+    <p class="muted small" style="margin:0 0 1rem">아차사고 조회·조치 입력은 로그인한 직원만 할 수 있어요.</p>
+    <form id="loginForm">
+      <label class="field">이메일<input type="email" id="email" autocomplete="username" required></label>
+      <label class="field">비밀번호<input type="password" id="pw" autocomplete="current-password" required></label>
+      <button type="submit" class="btn primary" id="loginBtn" style="width:100%">로그인</button>
+      <p class="err" id="loginErr" hidden></p>
+    </form>
+  </section>
+
+  <!-- 권한 없음 -->
+  <section class="card login" id="noRole" hidden>
+    <h1>권한이 아직 연결되지 않았어요</h1>
+    <p class="muted">로그인은 되었지만 이 계정에 관리 권한이 없습니다. 팀장에게 권한 연결을 요청해주세요.</p>
+    <button type="button" class="btn" id="noRoleOut">로그아웃</button>
+  </section>
+
+  <!-- 본 화면 -->
+  <main id="app" hidden>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="t-list"  data-tab="list"  aria-selected="true">목록·조치</button>
+      <button class="tab" role="tab" id="t-stats" data-tab="stats" aria-selected="false">통계</button>
+      <button class="tab" role="tab" id="t-month" data-tab="month" aria-selected="false">월간 요약</button>
+    </div>
+    <div class="notice small" id="truncNote" hidden>최근 1,000건만 불러왔어요. 이전 기록은 CSV 백업으로 따로 보관하세요.</div>
+
+    <!-- 목록 -->
+    <section id="tab-list">
+      <div class="card" id="alertBox" hidden>
+        <strong>⚠ 반복 알림</strong> <span class="muted small">최근 90일, 같은 장소·같은 유형 3건 이상이면서 미조치가 남은 경우</span>
+        <div class="alerts" id="alerts"></div>
+      </div>
+      <div class="controls">
+        <label>기간<select id="fPeriod">
+          <option value="all">전체</option><option value="cur">이번 달</option><option value="prev">지난 달</option>
+          <option value="30">최근 30일</option><option value="90">최근 90일</option></select></label>
+        <label>장소<select id="fRoom"><option value="">전체</option></select></label>
+        <label>유형<select id="fType"><option value="">전체</option></select></label>
+        <label>상태<select id="fStatus">
+          <option value="">전체</option><option value="open">미완료 전체</option><option value="received">접수</option>
+          <option value="in_progress">진행</option><option value="forwarded">타부서 전달</option><option value="done">완료</option></select></label>
+        <label>피해<select id="fHarm"><option value="">전체</option><option value="no">아차사고(피해 없음)</option><option value="yes">피해 있음</option></select></label>
+        <button type="button" class="btn small" id="fClear" hidden>알림 필터 해제</button>
+      </div>
+      <p class="muted small" id="listCount" style="margin:0 0 .5rem"></p>
+      <div id="list"></div>
+    </section>
+
+    <!-- 통계 -->
+    <section id="tab-stats" hidden>
+      <div class="controls">
+        <label>기간<select id="sPeriod">
+          <option value="cur">이번 달</option><option value="prev">지난 달</option><option value="3m">최근 3개월</option><option value="all">전체</option></select></label>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="card">
+        <h2>월별 접수 건수 <span class="muted small">(최근 6개월)</span></h2>
+        <div id="trend"></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>유형별</h2><div class="bars" id="byType"></div></div>
+        <div class="card"><h2>장소별 <span class="muted small">(고정 순서 · 순위 아님)</span></h2><div class="bars" id="byPlace"></div></div>
+      </div>
+    </section>
+
+    <!-- 월간 요약 -->
+    <section id="tab-month" hidden>
+      <div class="controls">
+        <label>월 선택<input type="month" id="mSel"></label>
+        <button type="button" class="btn primary small" id="printBtn">인쇄 / PDF로 저장</button>
+        <button type="button" class="btn small" id="csvMonth">이 달 CSV</button>
+        <button type="button" class="btn small" id="csvAll">전체 CSV 백업</button>
+      </div>
+      <article class="sumdoc" id="sumDoc"></article>
+    </section>
+  </main>
+</div>
+
+<!-- 상세·조치 -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="sheet">
+    <h3 id="dTitle" tabindex="-1"></h3>
+    <dl class="sum" id="dSum"></dl>
+    <hr class="hr">
+    <h4 style="margin:0 0 .6rem">조치 입력</h4>
+    <label class="field">상태
+      <select id="dStatus">
+        <option value="received">접수</option><option value="in_progress">진행</option>
+        <option value="forwarded">타부서 전달</option><option value="done">완료</option></select></label>
+    <label class="field" id="fwdWrap" hidden>전달한 부서 (예: 시설팀, 총무팀)
+      <input type="text" id="dFwd" maxlength="60"></label>
+    <label class="field">대책·조치 내용
+      <textarea id="dNote" maxlength="500" placeholder="예) 트랜스퍼 전 브레이크 확인 구두 콜 시행 / 단건이면 '공유로 종결'"></textarea></label>
+    <label class="field">조치 담당자
+      <input type="text" id="dOwner" maxlength="40" placeholder="예) 운동치료실장"></label>
+    <div class="actions">
+      <button type="button" class="btn small" id="shareOnly">공유로 종결 입력</button>
+    </div>
+    <p class="err" id="dErr" hidden></p>
+    <div class="actions">
+      <button type="button" class="btn primary" id="dSave">저장</button>
+      <button type="button" class="btn" id="dClose">닫기</button>
+    </div>
+    <hr class="hr">
+    <h4 style="margin:0 0 .4rem">변경 이력</h4>
+    <ul class="hist" id="hist"><li class="muted">불러오는 중…</li></ul>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  'use strict';
+  const CFG = window.NM_CONFIG || {};
+  const $ = (id) => document.getElementById(id);
+
+  /* ---------- 작은 DOM 헬퍼 (사용자 입력은 항상 textContent로만 넣음) ---------- */
+  function h(tag, props) {
+    const e = document.createElement(tag);
+    if (props) for (const k in props) {
+      const v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (let i = 2; i < arguments.length; i++) {
+      [].concat(arguments[i]).forEach((c) => {
+        if (c == null || c === false) return;
+        e.append(c && c.nodeType ? c : document.createTextNode(String(c)));
+      });
+    }
+    return e;
+  }
+
+  const STATUS = {
+    received: { t: '접수', c: 's-recv' }, in_progress: { t: '진행', c: 's-prog' },
+    forwarded: { t: '타부서 전달', c: 's-fwd' }, done: { t: '완료', c: 's-done' }
+  };
+  const TARGET = { patient: '환자', staff: '직원', facility: '시설·장비' };
+  const FIELD = { status: '상태', action_note: '대책·조치', action_owner: '담당자', forwarded_to: '전달 부서', forwarded_at: '전달 시각', handled_at: '완료 시각' };
+  const SHARE_ONLY = '공유로 종결';
+
+  const S = { sb: null, role: null, places: [], types: [], reports: [], pl: {}, ty: {}, loadedAt: null, truncated: false,
+    f: { period: 'all', room: '', type: '', status: '', harm: '', place: '' }, openId: null };
+
+  /* ---------- 시간 (KST) ---------- */
+  const FMT = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  function kst(v) {
+    if (!v) return '';
+    const p = {};
+    FMT.formatToParts(new Date(v)).forEach((x) => { p[x.type] = x.value; });
+    return p.year + '-' + p.month + '-' + p.day + ' ' + p.hour + ':' + p.minute;
+  }
+  const monthKey = (v) => kst(v).slice(0, 7);
+  function shiftMonth(k, d) {
+    let y = Number(k.slice(0, 4)), m = Number(k.slice(5, 7)) + d;
+    while (m < 1) { m += 12; y--; }
+    while (m > 12) { m -= 12; y++; }
+    return y + '-' + String(m).padStart(2, '0');
+  }
+  const monthLabel = (k) => k.slice(0, 4) + '년 ' + Number(k.slice(5, 7)) + '월';
+  const nowKey = () => monthKey(new Date());
+  const DAY = 86400000;
+
+  function inPeriod(r, p) {
+    const mk = monthKey(r.created_at), cur = nowKey();
+    switch (p) {
+      case 'cur': return mk === cur;
+      case 'prev': return mk === shiftMonth(cur, -1);
+      case '3m': return mk >= shiftMonth(cur, -2);
+      case '30': return Date.now() - new Date(r.created_at).getTime() <= 30 * DAY;
+      case '90': return Date.now() - new Date(r.created_at).getTime() <= 90 * DAY;
+      default: return true;
+    }
+  }
+
+  /* ---------- 이름 찾기 ---------- */
+  const plName = (id) => (S.pl[id] ? S.pl[id].name : '(없는 장소)');
+  const tyName = (id) => (S.ty[id] ? S.ty[id].name : '(없는 유형)');
+  const placeText = (r) => plName(r.room_id) + (r.place_id !== r.room_id ? ' · ' + plName(r.place_id) : '');
+  const isDone = (r) => r.status === 'done';
+
+  function visibleRooms() {
+    const tops = S.places.filter((p) => !p.parent_id);
+    const ro = S.role || {};
+    if (ro.role === 'manager') return tops.filter((p) => (ro.room_ids || []).indexOf(p.id) !== -1);
+    if (ro.role === 'team_lead') return tops.filter((p) => p.unit_id === ro.unit_id);
+    return tops;
+  }
+
+  /* ---------- 알림 · 토스트 ---------- */
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+  function fatal(msg) { const b = $('fatal'); b.textContent = msg; b.hidden = !msg; }
+
+  /* ---------- 화면 전환 ---------- */
+  function showOnly(name) {
+    ['login', 'noRole', 'app'].forEach((id) => { $(id).hidden = id !== name; });
+    $('who').hidden = name !== 'app';
+  }
+
+  /* ---------- 데이터 ---------- */
+  async function loadAll() {
+    const res = await Promise.all([
+      S.sb.from('places').select('id,slug,name,parent_id,unit_id,is_common,sort_order').order('sort_order'),
+      S.sb.from('report_types').select('id,slug,name,icon,sort_order').order('sort_order'),
+      S.sb.from('reports').select('*').order('created_at', { ascending: false }).range(0, 999)
+    ]);
+    res.forEach((x) => { if (x.error) throw x.error; });
+    S.places = res[0].data || [];
+    S.types = res[1].data || [];
+    S.reports = res[2].data || [];
+    S.truncated = S.reports.length >= 1000;
+    S.pl = {}; S.places.forEach((p) => { S.pl[p.id] = p; });
+    S.ty = {}; S.types.forEach((t) => { S.ty[t.id] = t; });
+    S.loadedAt = new Date();
+    $('truncNote').hidden = !S.truncated;
+  }
+
+  async function enter() {
+    fatal('');
+    const u = await S.sb.auth.getUser();
+    const uid = u && u.data && u.data.user ? u.data.user.id : null;
+    if (!uid) { showOnly('login'); return; }
+    const r = await S.sb.from('staff_roles').select('role,display_name,unit_id,room_ids').eq('user_id', uid).maybeSingle();
+    if (r.error) { fatal('권한 정보를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해주세요.'); showOnly('noRole'); return; }
+    if (!r.data) { showOnly('noRole'); return; }
+    S.role = r.data;
+    try { await loadAll(); }
+    catch (e) { fatal('데이터를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침을 눌러주세요.'); showOnly('app'); }
+    const roleTxt = { manager: '실장', team_lead: '팀장', hospital_admin: '병원 관리자' }[S.role.role] || '';
+    $('whoText').textContent = (S.role.display_name || '') + ' · ' + roleTxt + (S.loadedAt ? ' · ' + kst(S.loadedAt).slice(11) + ' 갱신' : '');
+    fillFilters();
+    showOnly('app');
+    renderAll();
+  }
+
+  /* ---------- 필터 ---------- */
+  function fillFilters() {
+    const room = $('fRoom'), type = $('fType');
+    const rv = room.value, tv = type.value;
+    room.replaceChildren(h('option', { value: '', text: '전체' }));
+    visibleRooms().forEach((p) => room.append(h('option', { value: p.id, text: p.name })));
+    type.replaceChildren(h('option', { value: '', text: '전체' }));
+    S.types.forEach((t) => type.append(h('option', { value: t.id, text: t.name })));
+    room.value = rv; type.value = tv;
+    if (room.value !== rv) S.f.room = '';
+    if (type.value !== tv) S.f.type = '';
+  }
+
+  function filtered() {
+    const f = S.f;
+    return S.reports.filter((r) => {
+      if (!inPeriod(r, f.period)) return false;
+      if (f.room && r.room_id !== f.room) return false;
+      if (f.place && r.place_id !== f.place) return false;
+      if (f.type && r.type_id !== f.type) return false;
+      if (f.status === 'open' && isDone(r)) return false;
+      if (f.status && f.status !== 'open' && r.status !== f.status) return false;
+      if (f.harm === 'yes' && !r.harm) return false;
+      if (f.harm === 'no' && r.harm) return false;
+      return true;
+    });
+  }
+
+  /* ---------- 반복 알림 ---------- */
+  function repeatGroups(list) {
+    const g = {};
+    list.forEach((r) => {
+      const k = r.type_id + '|' + r.place_id;
+      const x = g[k] || (g[k] = { type: r.type_id, place: r.place_id, room: r.room_id, count: 0, open: 0 });
+      x.count++; if (!isDone(r)) x.open++;
+    });
+    return Object.keys(g).map((k) => g[k]).filter((x) => x.count >= 3).sort((a, b) => b.count - a.count);
+  }
+  const groupLabel = (x) => (x.place !== x.room ? plName(x.room) + ' · ' : '') + plName(x.place) + ' · ' + tyName(x.type);
+
+  function renderAlerts() {
+    const recent = S.reports.filter((r) => Date.now() - new Date(r.created_at).getTime() <= 90 * DAY);
+    const groups = repeatGroups(recent).filter((x) => x.open > 0);
+    const box = $('alertBox'), list = $('alerts');
+    list.replaceChildren();
+    groups.forEach((x) => {
+      list.append(h('button', {
+        type: 'button', class: 'alert-btn',
+        text: groupLabel(x) + ' ' + x.count + '건 (미조치 ' + x.open + ')',
+        onclick: () => {
+          S.f.place = x.place; S.f.type = x.type; S.f.period = '90'; S.f.room = ''; S.f.status = ''; S.f.harm = '';
+          syncFilterUI(); renderList(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }));
+    });
+    box.hidden = groups.length === 0;
+  }
+
+  function syncFilterUI() {
+    $('fPeriod').value = S.f.period; $('fRoom').value = S.f.room; $('fType').value = S.f.type;
+    $('fStatus').value = S.f.status; $('fHarm').value = S.f.harm;
+    $('fClear').hidden = !S.f.place;
+  }
+
+  /* ---------- 목록 ---------- */
+  function renderList() {
+    renderAlerts();
+    const rows = filtered();
+    const box = $('list');
+    box.replaceChildren();
+    $('listCount').textContent = rows.length + '건' + (S.f.place ? ' · 반복 알림 필터 적용 중' : '');
+    if (!rows.length) { box.append(h('div', { class: 'empty', text: '조건에 맞는 보고가 없어요.' })); return; }
+    rows.forEach((r) => {
+      const st = STATUS[r.status] || STATUS.received;
+      box.append(h('button', { type: 'button', class: 'row', onclick: () => openDetail(r.id) },
+        h('div', null, h('div', { class: 'no', text: '#' + r.seq }), h('div', { class: 'dt', text: kst(r.created_at) })),
+        h('div', null,
+          h('div', { class: 'tags' },
+            h('span', { class: 'tag', text: placeText(r) }),
+            h('span', { class: 'tag type', text: tyName(r.type_id) }),
+            h('span', { class: 'tag type', text: TARGET[r.target] || '' }),
+            r.harm ? h('span', { class: 'tag harm', text: '피해 있음' }) : null),
+          h('div', { class: 'sit', text: r.situation })),
+        h('div', null, h('span', { class: 'chip ' + st.c, text: st.t }))));
+    });
+  }
+
+  /* ---------- 상세 · 조치 ---------- */
+  function openDetail(id) {
+    const r = S.reports.find((x) => x.id === id);
+    if (!r) return;
+    S.openId = id;
+    $('dTitle').textContent = '#' + r.seq + ' ' + tyName(r.type_id);
+    const rows = [
+      ['접수 시각', kst(r.created_at)], ['발생 시각', kst(r.occurred_at)], ['장소', placeText(r)],
+      ['대상', TARGET[r.target] || ''], ['피해', r.harm ? '피해 있음' : '없음 (아차사고)'],
+      ['상황', r.situation], ['즉시 조치', r.immediate_action || '-'], ['보고자', r.reporter_name || '익명']
+    ];
+    const dl = $('dSum'); dl.replaceChildren();
+    rows.forEach((x) => { dl.append(h('dt', { text: x[0] }), h('dd', { text: x[1] })); });
+    $('dStatus').value = r.status;
+    $('dFwd').value = r.forwarded_to || '';
+    $('dNote').value = r.action_note || '';
+    $('dOwner').value = r.action_owner || '';
+    $('fwdWrap').hidden = r.status !== 'forwarded';
+    $('dErr').hidden = true;
+    $('modal').classList.add('on');
+    $('dTitle').focus();
+    loadHistory(id);
+  }
+  const closeDetail = () => { $('modal').classList.remove('on'); S.openId = null; };
+
+  function changeText(k, pair) {
+    const fmtv = (v) => {
+      if (v == null || v === '') return '(없음)';
+      if (k === 'status') return (STATUS[v] || {}).t || v;
+      if (k === 'forwarded_at' || k === 'handled_at') return kst(v);
+      return v;
+    };
+    return (FIELD[k] || k) + ': ' + fmtv(pair[0]) + ' → ' + fmtv(pair[1]);
+  }
+
+  async function loadHistory(id) {
+    const ul = $('hist');
+    ul.replaceChildren(h('li', { class: 'muted', text: '불러오는 중…' }));
+    const res = await S.sb.from('report_events').select('created_at,kind,changes').eq('report_id', id).order('created_at');
+    if (S.openId !== id) return;
+    ul.replaceChildren();
+    if (res.error) { ul.append(h('li', { class: 'muted', text: '이력을 불러오지 못했어요.' })); return; }
+    (res.data || []).forEach((ev) => {
+      const t = h('span', { class: 't', text: kst(ev.created_at) });
+      if (ev.kind === 'created') { ul.append(h('li', null, t, '접수')); return; }
+      const ch = ev.changes || {};
+      ul.append(h('li', null, t, Object.keys(ch).map((k) => changeText(k, ch[k])).join(' / ') || '수정'));
+    });
+    if (!ul.children.length) ul.append(h('li', { class: 'muted', text: '이력이 없어요.' }));
+  }
+
+  async function saveDetail() {
+    const r = S.reports.find((x) => x.id === S.openId);
+    if (!r) return;
+    const clean = (v) => { const s = (v || '').trim(); return s ? s : null; };
+    const patch = {
+      status: $('dStatus').value,
+      action_note: clean($('dNote').value),
+      action_owner: clean($('dOwner').value),
+      forwarded_to: $('dStatus').value === 'forwarded' ? clean($('dFwd').value) : (r.forwarded_to || null)
+    };
+    const err = $('dErr'); err.hidden = true;
+    if (patch.status === 'forwarded' && !patch.forwarded_to) { err.textContent = '전달한 부서를 적어주세요.'; err.hidden = false; return; }
+    if (patch.status === 'done' && !patch.action_note) { err.textContent = '완료로 바꾸려면 대책·조치 내용을 적어주세요. (단건이면 “공유로 종결”)'; err.hidden = false; return; }
+    const btn = $('dSave'); btn.disabled = true; btn.textContent = '저장 중…';
+    try {
+      const res = await S.sb.from('reports').update(patch).eq('id', r.id).select().single();
+      if (res.error) throw res.error;
+      Object.assign(r, res.data);
+      renderList();
+      if (!$('tab-stats').hidden) renderStats();
+      if (!$('tab-month').hidden) renderMonth();
+      toast('저장했습니다');
+      loadHistory(r.id);
+    } catch (e) {
+      err.textContent = (e && e.code === 'PGRST116') ? '수정 권한이 없거나 이미 바뀐 보고예요. 새로고침 후 다시 확인해주세요.'
+        : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.';
+      err.hidden = false;
+    } finally { btn.disabled = false; btn.textContent = '저장'; }
+  }
+
+  /* ---------- 통계 ---------- */
+  function barRows(items) {
+    const max = Math.max(1, ...items.map((i) => i.count));
+    return items.map((i) => h('div', { class: 'brow', title: i.label + ' ' + i.count + '건' },
+      h('span', { class: 'lab', text: i.label }),
+      h('div', { class: 'track', role: 'img', 'aria-label': i.label + ' ' + i.count + '건' },
+        h('div', { class: 'fill', style: 'width:' + Math.round((i.count / max) * 100) + '%' })),
+      h('span', { class: 'n', text: String(i.count) })));
+  }
+
+  function trendView(el) {
+    const cur = nowKey(), keys = [];
+    for (let i = 5; i >= 0; i--) keys.push(shiftMonth(cur, -i));
+    const counts = keys.map((k) => S.reports.filter((r) => monthKey(r.created_at) === k).length);
+    const max = Math.max(1, ...counts);
+    el.replaceChildren(
+      h('div', { class: 'trend' }, keys.map((k, i) =>
+        h('div', { class: 'tcol', title: monthLabel(k) + ' ' + counts[i] + '건' },
+          h('span', { class: 'tn', text: String(counts[i]) }),
+          h('div', { class: 'tb', style: 'height:' + Math.round((counts[i] / max) * 140) + 'px' })))),
+      h('div', { class: 'tlabels' }, keys.map((k) => h('span', { text: Number(k.slice(5, 7)) + '월' }))));
+  }
+
+  function summarize(rs) {
+    const total = rs.length, done = rs.filter(isDone);
+    const spans = done.filter((r) => r.handled_at).map((r) => (new Date(r.handled_at) - new Date(r.created_at)) / DAY);
+    return {
+      total: total, near: rs.filter((r) => !r.harm).length, harm: rs.filter((r) => r.harm).length,
+      done: done.length, rate: total ? Math.round((done.length / total) * 100) : 0,
+      avgDays: spans.length ? (spans.reduce((a, b) => a + b, 0) / spans.length) : null
+    };
+  }
+
+  function kpiTiles(s) {
+    return [['접수 건수', s.total + '건'], ['아차사고(피해 없음)', s.near + '건'], ['피해 있음', s.harm + '건'],
+      ['조치 완료율', s.rate + '%'], ['평균 처리 기간', s.avgDays == null ? '-' : (s.avgDays < 1 ? '1일 미만' : s.avgDays.toFixed(1) + '일')]];
+  }
+
+  function renderStats() {
+    const rs = S.reports.filter((r) => inPeriod(r, $('sPeriod').value));
+    const s = summarize(rs);
+    $('kpis').replaceChildren(...kpiTiles(s).map((k) => h('div', { class: 'kpi' }, h('div', { class: 'v', text: k[1] }), h('div', { class: 'l', text: k[0] }))));
+    trendView($('trend'));
+    const typeItems = S.types.map((t) => ({ label: t.name, count: rs.filter((r) => r.type_id === t.id).length })).filter((i) => i.count > 0);
+    $('byType').replaceChildren(...(typeItems.length ? barRows(typeItems) : [h('div', { class: 'muted', text: '해당 기간 접수 건이 없어요.' })]));
+    const placeItems = visibleRooms().map((p) => ({ label: p.name, count: rs.filter((r) => r.room_id === p.id).length }));
+    $('byPlace').replaceChildren(...barRows(placeItems));
+  }
+
+  /* ---------- 월간 요약 ---------- */
+  function renderMonth() {
+    const mk = $('mSel').value || nowKey();
+    const rs = S.reports.filter((r) => monthKey(r.created_at) === mk);
+    const s = summarize(rs);
+    const doc = $('sumDoc');
+    doc.replaceChildren();
+    doc.append(h('div', { class: 'head' },
+      h('div', null, h('h2', { text: '아차사고 월간 요약 · ' + monthLabel(mk) }),
+        h('div', { class: 'muted small', text: '재활치료팀 · 작성 ' + kst(new Date()).slice(0, 10) })),
+      h('img', { src: 'assets/logo-horizontal.png', alt: '양산제일병원', onerror: (e) => { e.target.hidden = true; } })));
+
+    if (!rs.length) { doc.append(h('p', { class: 'empty', text: '이 달에 접수된 건이 없어요.' })); return; }
+
+    doc.append(h('p', { text: monthLabel(mk) + ' 한 달간 ' + s.total + '건이 접수되었고, 이 중 피해 없는 아차사고는 ' + s.near + '건입니다. 조치 완료는 ' + s.done + '건(' + s.rate + '%)입니다.' }));
+
+    doc.append(h('table', null, h('tbody', null, kpiTiles(s).map((k) => h('tr', null, h('th', { text: k[0] }), h('td', { text: k[1] }))))));
+
+    const typeItems = S.types.map((t) => ({ label: t.name, count: rs.filter((r) => r.type_id === t.id).length })).filter((i) => i.count > 0);
+    doc.append(h('h4', { text: '유형별 접수' }), h('div', { class: 'bars' }, barRows(typeItems)));
+
+    const stRows = Object.keys(STATUS).map((k) => [STATUS[k].t, rs.filter((r) => r.status === k).length]);
+    doc.append(h('h4', { text: '처리 현황' }), h('table', null, h('tbody', null, stRows.map((x) => h('tr', null, h('th', { text: x[0] }), h('td', { text: x[1] + '건' }))))));
+
+    const cases = rs.filter((r) => isDone(r) && r.action_note && r.action_note.trim() !== SHARE_ONLY);
+    const shareOnly = rs.filter((r) => isDone(r) && r.action_note && r.action_note.trim() === SHARE_ONLY).length;
+    doc.append(h('h4', { text: '개선 사례 (대책 적용 ' + cases.length + '건' + (shareOnly ? ' · 공유로 종결 ' + shareOnly + '건' : '') + ')' }));
+    if (!cases.length) doc.append(h('p', { class: 'muted', text: '이 달에 대책까지 적용된 건은 아직 없어요.' }));
+    cases.forEach((r) => {
+      doc.append(h('div', { class: 'case' },
+        h('div', { class: 'small muted', text: placeText(r) + ' · ' + tyName(r.type_id) }),
+        h('div', { text: '상황: ' + (r.situation.length > 90 ? r.situation.slice(0, 90) + '…' : r.situation) }),
+        h('div', { class: 'a', text: '조치: ' + r.action_note + (r.action_owner ? ' (' + r.action_owner + ')' : '') })));
+    });
+
+    const win = S.reports.filter((r) => { const k = monthKey(r.created_at); return k >= shiftMonth(mk, -2) && k <= mk; });
+    const rep = repeatGroups(win);
+    if (rep.length) {
+      doc.append(h('h4', { text: '반복 유형 (최근 3개월, 같은 장소·유형 3건 이상)' }),
+        h('table', null, h('tbody', null, rep.map((x) => h('tr', null, h('th', { text: groupLabel(x) }), h('td', { text: x.count + '건 · 미조치 ' + x.open + '건' }))))));
+    }
+
+    const open = rs.filter((r) => !isDone(r));
+    doc.append(h('h4', { text: '미완료 ' + open.length + '건' }));
+    open.slice(0, 10).forEach((r) => {
+      doc.append(h('div', { class: 'case' }, h('div', { class: 'small muted', text: '#' + r.seq + ' · ' + placeText(r) + ' · ' + tyName(r.type_id) + ' · ' + STATUS[r.status].t }),
+        h('div', { text: r.situation.length > 90 ? r.situation.slice(0, 90) + '…' : r.situation })));
+    });
+    if (open.length > 10) doc.append(h('p', { class: 'muted small', text: '그 외 ' + (open.length - 10) + '건은 목록 화면에서 확인하세요.' }));
+  }
+
+  /* ---------- CSV ---------- */
+  function csvCell(v) {
+    let s = v == null ? '' : String(v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;           // 엑셀 수식 실행 방지
+    if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function downloadCsv(list, name) {
+    const head = ['접수번호', '접수일시', '발생일시', '장소', '세부장소', '유형', '대상', '피해', '상황', '즉시조치', '보고자', '상태', '대책·조치', '조치담당', '전달부서', '전달일시', '완료일시'];
+    const lines = [head.map(csvCell).join(',')];
+    list.slice().sort((a, b) => a.seq - b.seq).forEach((r) => {
+      lines.push([r.seq, kst(r.created_at), kst(r.occurred_at), plName(r.room_id), r.place_id !== r.room_id ? plName(r.place_id) : '',
+        tyName(r.type_id), TARGET[r.target] || '', r.harm ? '피해 있음' : '아차사고', r.situation, r.immediate_action, r.reporter_name || '익명',
+        (STATUS[r.status] || {}).t, r.action_note, r.action_owner, r.forwarded_to, kst(r.forwarded_at), kst(r.handled_at)].map(csvCell).join(','));
+    });
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = h('a', { href: url, download: name });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  /* ---------- 공통 렌더 · 이벤트 ---------- */
+  function renderAll() { syncFilterUI(); renderList(); }
+
+  function switchTab(name) {
+    ['list', 'stats', 'month'].forEach((t) => {
+      $('tab-' + t).hidden = t !== name;
+      $('t-' + t).setAttribute('aria-selected', String(t === name));
+    });
+    if (name === 'stats') renderStats();
+    if (name === 'month') { if (!$('mSel').value) $('mSel').value = nowKey(); renderMonth(); }
+  }
+
+  async function refresh() {
+    const b = $('refreshBtn'); b.disabled = true;
+    try { await loadAll(); fillFilters(); renderAll();
+      if (!$('tab-stats').hidden) renderStats();
+      if (!$('tab-month').hidden) renderMonth();
+      $('whoText').textContent = $('whoText').textContent.replace(/ · \d\d:\d\d 갱신$/, '') + ' · ' + kst(S.loadedAt).slice(11) + ' 갱신';
+      fatal('');
+    } catch (e) { fatal('새로고침하지 못했어요. 인터넷 연결을 확인해주세요.'); }
+    b.disabled = false;
+  }
+
+  function bind() {
+    $('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('loginBtn'), err = $('loginErr');
+      btn.disabled = true; btn.textContent = '로그인 중…'; err.hidden = true;
+      try {
+        const res = await S.sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('pw').value });
+        if (res.error) throw res.error;
+        $('pw').value = '';
+        await enter();
+      } catch (ex) {
+        err.textContent = '이메일 또는 비밀번호를 확인해주세요.'; err.hidden = false;
+      } finally { btn.disabled = false; btn.textContent = '로그인'; }
+    });
+    const out = async () => { try { await S.sb.auth.signOut(); } catch (e) { /* 무시 */ } S.role = null; S.reports = []; showOnly('login'); };
+    $('logoutBtn').addEventListener('click', out);
+    $('noRoleOut').addEventListener('click', out);
+    $('refreshBtn').addEventListener('click', refresh);
+
+    document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+    const map = { fPeriod: 'period', fRoom: 'room', fType: 'type', fStatus: 'status', fHarm: 'harm' };
+    // 필터를 직접 바꾸면 반복 알림으로 걸어둔 장소 필터는 풀림
+    Object.keys(map).forEach((id) => $(id).addEventListener('change', (e) => { S.f[map[id]] = e.target.value; S.f.place = ''; syncFilterUI(); renderList(); }));
+    $('fClear').addEventListener('click', () => { S.f = { period: 'all', room: '', type: '', status: '', harm: '', place: '' }; syncFilterUI(); renderList(); });
+    $('sPeriod').addEventListener('change', renderStats);
+    $('mSel').addEventListener('change', renderMonth);
+    $('printBtn').addEventListener('click', () => window.print());
+    $('csvMonth').addEventListener('click', () => { const mk = $('mSel').value || nowKey(); downloadCsv(S.reports.filter((r) => monthKey(r.created_at) === mk), '아차사고_' + mk + '.csv'); });
+    $('csvAll').addEventListener('click', () => downloadCsv(S.reports, '아차사고_전체백업_' + kst(new Date()).slice(0, 10) + '.csv'));
+
+    $('dStatus').addEventListener('change', (e) => { $('fwdWrap').hidden = e.target.value !== 'forwarded'; });
+    $('shareOnly').addEventListener('click', () => { $('dNote').value = SHARE_ONLY; $('dStatus').value = 'done'; $('fwdWrap').hidden = true; });
+    $('dSave').addEventListener('click', saveDetail);
+    $('dClose').addEventListener('click', closeDetail);
+    $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) closeDetail(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+  }
+
+  async function init() {
+    bind();
+    if (!CFG.SUPABASE_URL || CFG.SUPABASE_URL.indexOf('YOUR-') !== -1) {
+      fatal('아직 연결 설정이 되지 않았어요. config.js에 Supabase 주소와 anon 키를 넣어주세요.'); return;
+    }
+    if (!window.supabase) { fatal('화면 구성 요소를 불러오지 못했어요. 인터넷 연결을 확인해주세요.'); return; }
+    S.sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+    try {
+      const s = await S.sb.auth.getSession();
+      if (s && s.data && s.data.session) await enter(); else showOnly('login');
+    } catch (e) { showOnly('login'); }
+    S.sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') showOnly('login'); });
+  }
+
+  window.__nmAdmin = { S: S, kst: kst, shiftMonth: shiftMonth, csvCell: csvCell, repeatGroups: repeatGroups };   // 테스트용
+  init();
+})();
+</script>
+</body>
+</html>
