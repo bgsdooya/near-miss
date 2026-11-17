@@ -90,6 +90,10 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
 .done .big{font-size:3rem;line-height:1}
 .done h2{margin:.6rem 0 .3rem;color:var(--brand-dark)}
 .foot{margin:1rem 0 0;color:var(--muted);font-size:.85rem;text-align:center}
+.casesbtn{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;margin:0 0 1rem;padding:.6rem .9rem;border-radius:12px;
+  border:2px solid var(--brand);background:var(--brand-soft);color:var(--brand-dark);font-weight:800;text-decoration:none}
+.casesbtn small{font-weight:500;color:var(--muted);display:block;font-size:.8rem}
+.casesbtn .go{font-size:1.2rem}
 .linkbtn{display:inline-flex;align-items:center;min-height:44px;color:var(--brand-dark);font-weight:700;text-decoration:underline}
 [hidden]{display:none !important}
 </style>
@@ -114,7 +118,10 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
   <main>
     <h1>아차사고 공유</h1>
     <p class="lead">보고는 잘못이 아니라 팀을 지키는 일입니다. 30초면 됩니다.</p>
-    <p style="margin:-.6rem 0 .8rem"><a class="linkbtn" href="cases.html">다른 곳 공유 사례 보기 →</a></p>
+    <a class="casesbtn" id="casesLink" href="cases.html" hidden>
+      <span><span id="casesCount">공유 사례 보기</span><small>다른 곳에서 있었던 일과 바뀐 점</small></span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
 
     <noscript><div class="warn">이 화면은 자바스크립트가 켜져 있어야 사용할 수 있어요.</div></noscript>
 
@@ -529,6 +536,18 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
     catch (e) { showLoadErr('목록을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.'); return; }
     buildUI();
     applyParam();
+    loadCasesCount();
+  }
+
+  /* 공유 사례가 1건 이상일 때만 상단 버튼을 보여줌 (실패해도 입력엔 영향 없음) */
+  async function loadCasesCount() {
+    try {
+      const res = await sb.rpc('get_shared_cases', { p_limit: 200 });
+      if (res.error || !Array.isArray(res.data) || !res.data.length) return;
+      const n = res.data.length;
+      $('casesCount').textContent = '공유 사례 ' + n + (n >= 200 ? '건 이상' : '건') + ' 보기';
+      $('casesLink').hidden = false;
+    } catch (e) { /* 무시 */ }
   }
 
   init();
