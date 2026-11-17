@@ -36,9 +36,16 @@ h1{font-size:1.5rem;margin:.4rem 0 .2rem;color:var(--brand-dark)}
 .card h2{font-size:1.05rem;margin:0 0 .6rem;display:flex;gap:.5rem;align-items:center}
 .n{display:inline-flex;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--brand);color:#fff;
   align-items:center;justify-content:center;font-size:.85rem;flex:none}
+.opt-sub{display:block;margin-top:.1rem;font-size:.78rem;font-weight:500;color:var(--muted);text-align:center;line-height:1.25}
 .opt-tag{font-size:.8rem;font-weight:500;color:var(--muted)}
 .opts{display:grid;gap:8px}
 .opts.two{grid-template-columns:1fr 1fr}
+.opts.one{grid-template-columns:1fr}
+.opts.one .opt{justify-content:flex-start;text-align:left;padding:.55rem .8rem;gap:.7rem}
+.opts.one .opt .ico{font-size:1.4rem;width:1.8rem;text-align:center}
+.opts.one .opt>span:not(.ico){flex:1}
+.opts.one .opt .opt-sub{text-align:left}
+.opts.one .opt[aria-checked="true"]::before{order:3}
 .opts.three{grid-template-columns:repeat(3,1fr)}
 .opt{display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:3.1rem;padding:.55rem .5rem;
   border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;font-weight:600;
@@ -146,7 +153,7 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
 
       <section class="card" id="s-type">
         <h2><span class="n">2</span> 어떤 유형인가요?</h2>
-        <div class="opts two" id="typeOpts" role="radiogroup" aria-label="유형"><div class="loading">불러오는 중…</div></div>
+        <div class="opts one" id="typeOpts" role="radiogroup" aria-label="유형"><div class="loading">불러오는 중…</div></div>
         <p class="err" id="e-type" hidden></p>
       </section>
 
@@ -159,7 +166,7 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
         <h2><span class="n">4</span> 실제 피해가 있었나요?</h2>
         <div class="opts two" id="harmOpts" role="radiogroup" aria-label="피해 여부"></div>
         <div class="warn" id="harmWarn" hidden>
-          이미 피해가 생긴 일은 병원의 기존 사고 보고 경로로도 꼭 보고해주세요. 이 화면에도 기록으로 남습니다.
+          <strong>이미 피해가 생긴 일은 아차사고가 아니에요.</strong><br>낙상보고 등 병원의 기존 사고 보고체계로 보고해주세요. 이 화면에는 올라가지 않아요.
         </div>
         <p class="err" id="e-harm" hidden></p>
       </section>
@@ -290,6 +297,11 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
       }
       const t = document.createElement('span');
       t.textContent = it.label;
+      if (it.sub) {
+        const sm = document.createElement('small');
+        sm.className = 'opt-sub'; sm.textContent = it.sub;
+        t.appendChild(sm);
+      }
       b.appendChild(t);
       b.addEventListener('click', () => onPick(it.key));
       box.appendChild(b);
@@ -350,10 +362,18 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
     hide('e-when');
   }
 
+  /* 세부 장소가 있는 장소는 버튼 아래에 예시를 작게 보여줌 (복도·화장실 등) */
+  function subHint(slug) {
+    const kids = kidsOf(slug);
+    if (!kids.length) return '';
+    const pick = kids.filter((k) => k.name === '복도' || k.name === '화장실');
+    return (pick.length === 2 ? pick : kids.slice(0, 2)).map((k) => k.name).join('·') + ' 등';
+  }
+
   function buildUI() {
     const tops = topPlaces();
-    renderOpts($('placeOpts'), tops.map((p) => ({ key: p.slug, label: p.name })), null, pickPlace);
-    renderOpts($('typeOpts'), state.types.slice().sort(bySort).map((t) => ({ key: t.slug, label: t.name, icon: t.icon })), null, pickType);
+    renderOpts($('placeOpts'), tops.map((p) => ({ key: p.slug, label: p.name, sub: subHint(p.slug) })), null, pickPlace);
+    renderOpts($('typeOpts'), state.types.slice().sort(bySort).map((t) => ({ key: t.slug, label: t.name, icon: t.icon, sub: t.hint || '' })), null, pickType);
     renderOpts($('targetOpts'), TARGETS, state.target, pickTarget);
     renderOpts($('harmOpts'), HARMS, null, pickHarm);
     renderOpts($('whenOpts'), WHENS, state.when, pickWhen);
@@ -376,11 +396,18 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
   /* ===== 데이터 불러오기 ===== */
   const unitSlug = (x) => { const u = Array.isArray(x.units) ? x.units[0] : x.units; return u ? u.slug : null; };
 
+  /* 유형 목록 (hint 칸이 아직 없는 DB에서도 동작하도록 한 번 더 시도) */
+  async function loadTypes() {
+    const q = (cols) => sb.from('report_types').select(cols).eq('active', true).order('sort_order');
+    const r = await q('slug,name,icon,hint,sort_order,units(slug)');
+    return r.error ? q('slug,name,icon,sort_order,units(slug)') : r;
+  }
+
   async function load() {
     const unit = new URLSearchParams(location.search).get('u') || CONFIG.UNIT;
     const [p, t] = await Promise.all([
       sb.from('places').select('id,slug,name,parent_id,is_common,sort_order,units(slug)').eq('active', true).order('sort_order'),
-      sb.from('report_types').select('slug,name,icon,sort_order,units(slug)').eq('active', true).order('sort_order')
+      loadTypes()
     ]);
     if (p.error) throw p.error;
     if (t.error) throw t.error;
@@ -404,6 +431,7 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
     else if (kidsOf(state.place).length && !state.sub) fail('e-place', '공용공간 세부 장소를 선택해주세요.', 's-place');
     if (!state.type) fail('e-type', '유형을 선택해주세요.', 's-type');
     if (!state.harm) fail('e-harm', '피해 여부를 선택해주세요.', 's-harm');
+    else if (state.harm === 'yes') fail('e-harm', '피해가 있었던 일은 여기에 올릴 수 없어요. 기존 보고체계로 보고해주세요.', 's-harm');
 
     const sit = $('situation').value.trim();
     const act = $('action').value.trim();
