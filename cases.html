@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#14669C">
+<title>공유 사례 · 양산제일병원</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#14669C; --brand-dark:#0F4F7A; --brand-soft:#E3F0F8;
+  --accent:#FCBF43; --accent-soft:#FFF4D6;
+  --ok:#1C753D; --ok-soft:#E6F4EA;
+  --danger:#B3261E; --danger-soft:#FCEBEA;
+  --ink:#14262F; --muted:#52646E; --line:#CCD9E2; --bg:#F3F7FA; --card:#fff;
+}
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 3rem}
+[hidden]{display:none !important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px}
+.logo img{display:block;height:58px;width:auto;max-width:100%;mix-blend-mode:multiply}
+.logo-fallback{font-weight:800;color:var(--brand-dark);font-size:1.1rem}
+.sizer{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0 0 4px;font-size:.8rem;color:var(--muted)}
+.sizer button{min-height:44px;padding:0 12px;border:1px solid var(--line);background:#fff;border-radius:10px;font:inherit;color:var(--ink);cursor:pointer}
+.sizer button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+h1{font-size:1.5rem;margin:.4rem 0 .2rem;color:var(--brand-dark)}
+.lead{margin:0 0 1rem;color:var(--muted)}
+.cta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;border-radius:12px;border:2px solid var(--brand);
+  background:var(--brand);color:#fff;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--brand-dark)}
+
+/* 유형 필터 */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1rem}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:700;color:var(--ink);cursor:pointer}
+.chip[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-dark)}
+
+/* 카드 */
+.month{margin:1.4rem 0 .5rem;font-size:1.05rem;font-weight:800;color:var(--brand-dark)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.5rem}
+.tag{display:inline-block;padding:.05rem .6rem;border-radius:999px;background:var(--brand-soft);color:var(--brand-dark);font-size:.82rem;font-weight:700}
+.tag.type{background:#EEF2F5;color:#33444D}
+.lab{font-size:.8rem;font-weight:800;color:var(--muted);margin:0 0 .15rem}
+.txt{margin:0;word-break:break-word;white-space:pre-wrap}
+.result{margin-top:.7rem;background:var(--ok-soft);border-radius:10px;padding:.65rem .75rem}
+.result .lab{color:var(--ok)}
+.empty{text-align:center;color:var(--muted);padding:2.5rem .5rem}
+.warn{background:var(--danger-soft);border-left:5px solid var(--danger);padding:.7rem .8rem;border-radius:8px;margin:.6rem 0}
+.note{margin:1.4rem 0 0;color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">
+      <img src="assets/logo-horizontal.png" alt="양산제일병원" onerror="this.hidden=true;document.getElementById('logoFallback').hidden=false">
+      <span class="logo-fallback" id="logoFallback" hidden>양산제일병원</span>
+    </div>
+  </header>
+  <div class="sizer" role="group" aria-label="글자 크기">
+    <span>글자 크기</span>
+    <button type="button" data-s="18">보통</button>
+    <button type="button" data-s="21">크게</button>
+    <button type="button" data-s="24">아주 크게</button>
+  </div>
+
+  <main>
+    <h1>공유 사례</h1>
+    <p class="lead">다른 곳에서 있었던 일과, 그 뒤에 이렇게 바꿨어요.</p>
+    <div class="cta">
+      <a class="btn" href="index.html">아차사고 올리기</a>
+    </div>
+
+    <noscript><div class="warn">이 화면은 자바스크립트가 켜져 있어야 볼 수 있어요.</div></noscript>
+
+    <div class="warn" id="err" hidden>
+      <p id="errMsg" style="margin:0 0 .6rem"></p>
+      <button type="button" class="btn ghost" id="retry">다시 시도</button>
+    </div>
+
+    <div class="chips" id="chips" role="radiogroup" aria-label="유형 거르기" hidden></div>
+    <div id="list"><p class="empty">불러오는 중…</p></div>
+
+    <p class="note">관리자가 확인하고 다듬은 사례만 보여요. 개인정보는 들어 있지 않아요.</p>
+  </main>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  'use strict';
+  const CFG = window.NM_CONFIG || {};
+  const $ = (id) => document.getElementById(id);
+  const S = { rows: [], type: '' };
+
+  /* 사용자 문장은 항상 textContent 로만 넣는다 */
+  function h(tag, props) {
+    const e = document.createElement(tag);
+    if (props) for (const k in props) {
+      const v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (let i = 2; i < arguments.length; i++) {
+      [].concat(arguments[i]).forEach((c) => {
+        if (c == null || c === false) return;
+        e.append(c && c.nodeType ? c : document.createTextNode(String(c)));
+      });
+    }
+    return e;
+  }
+
+  /* 글자 크기 */
+  function applySize(px) {
+    document.documentElement.style.fontSize = px + 'px';
+    document.querySelectorAll('.sizer button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.s) === px)));
+    try { localStorage.setItem('nm_font', String(px)); } catch (e) { /* 저장 실패는 무시 */ }
+  }
+  function initSize() {
+    let px = 18;
+    try { const v = Number(localStorage.getItem('nm_font')); if ([18, 21, 24].indexOf(v) !== -1) px = v; } catch (e) { /* 무시 */ }
+    applySize(px);
+    document.querySelectorAll('.sizer button').forEach((b) => b.addEventListener('click', () => applySize(Number(b.dataset.s))));
+  }
+
+  const monthLabel = (k) => (k && k.length >= 7) ? k.slice(0, 4) + '년 ' + Number(k.slice(5, 7)) + '월' : '';
+
+  function showErr(msg) { $('errMsg').textContent = msg; $('err').hidden = false; $('list').replaceChildren(); $('chips').hidden = true; }
+
+  function renderChips() {
+    const types = [];
+    S.rows.forEach((r) => { if (types.indexOf(r.type_name) === -1) types.push(r.type_name); });
+    const box = $('chips');
+    box.replaceChildren();
+    if (types.length < 2) { box.hidden = true; return; }
+    [''].concat(types).forEach((t) => {
+      box.append(h('button', {
+        type: 'button', class: 'chip', role: 'radio', 'aria-checked': String(S.type === t), text: t || '전체',
+        onclick: () => { S.type = t; renderChips(); renderList(); }
+      }));
+    });
+    box.hidden = false;
+  }
+
+  function renderList() {
+    const box = $('list');
+    box.replaceChildren();
+    const rows = S.rows.filter((r) => !S.type || r.type_name === S.type);
+    if (!rows.length) {
+      box.append(h('p', { class: 'empty', text: S.rows.length ? '이 유형의 사례는 아직 없어요.' : '아직 공유된 사례가 없어요. 첫 사례를 기다리고 있어요.' }));
+      return;
+    }
+    let cur = null;
+    rows.forEach((r) => {
+      if (r.shared_month !== cur) { cur = r.shared_month; box.append(h('h2', { class: 'month', text: monthLabel(cur) })); }
+      box.append(h('article', { class: 'card' },
+        h('div', { class: 'tags' }, h('span', { class: 'tag', text: r.place_name }), h('span', { class: 'tag type', text: r.type_name })),
+        h('p', { class: 'lab', text: '있었던 일' }),
+        h('p', { class: 'txt', text: r.share_text }),
+        r.share_result ? h('div', { class: 'result' }, h('p', { class: 'lab', text: '이렇게 바꿨어요' }), h('p', { class: 'txt', text: r.share_result })) : null));
+    });
+  }
+
+  async function load() {
+    $('err').hidden = true;
+    if (!CFG.SUPABASE_URL || CFG.SUPABASE_URL.indexOf('YOUR-') !== -1) { showErr('아직 연결 설정이 되지 않았어요. (관리자: config.js를 확인해주세요)'); return; }
+    if (!window.supabase) { showErr('화면 구성 요소를 불러오지 못했어요. 인터넷 연결을 확인해주세요.'); return; }
+    const sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+    try {
+      const res = await sb.rpc('get_shared_cases', { p_limit: 100 });
+      if (res.error) throw res.error;
+      S.rows = res.data || [];
+    } catch (e) {
+      showErr('사례를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.');
+      return;
+    }
+    renderChips();
+    renderList();
+  }
+
+  initSize();
+  $('retry').addEventListener('click', load);
+  load();
+})();
+</script>
+</body>
+</html>

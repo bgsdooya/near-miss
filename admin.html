@@ -74,6 +74,9 @@ textarea{width:100%;min-height:5rem;resize:vertical}
 .tag{display:inline-block;padding:.05rem .55rem;border-radius:999px;background:var(--brand-soft);color:var(--brand-dark);font-size:.8rem;font-weight:700}
 .tag.type{background:#EEF2F5;color:#33444D}
 .tag.harm{background:var(--danger-soft);color:var(--danger)}
+.tag.share{background:#E6F4EA;color:#1C753D}
+.check{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:700;cursor:pointer}
+.check input{width:22px;height:22px}
 .sit{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
 .chip{display:inline-block;padding:.15rem .7rem;border-radius:999px;font-size:.82rem;font-weight:800;white-space:nowrap;border:1px solid transparent}
 .s-recv{background:#FFF4D6;color:#7A5600;border-color:#FCBF43}
@@ -206,6 +209,7 @@ textarea{width:100%;min-height:5rem;resize:vertical}
           <option value="">전체</option><option value="open">미완료 전체</option><option value="received">접수</option>
           <option value="in_progress">진행</option><option value="forwarded">타부서 전달</option><option value="done">완료</option></select></label>
         <label>피해<select id="fHarm"><option value="">전체</option><option value="no">아차사고(피해 없음)</option><option value="yes">피해 있음</option></select></label>
+        <label>공유<select id="fShared"><option value="">전체</option><option value="yes">직원 공유중</option><option value="no">미공유</option></select></label>
         <button type="button" class="btn small" id="fClear" hidden>알림 필터 해제</button>
       </div>
       <p class="muted small" id="listCount" style="margin:0 0 .5rem"></p>
@@ -262,6 +266,18 @@ textarea{width:100%;min-height:5rem;resize:vertical}
     <div class="actions">
       <button type="button" class="btn small" id="shareOnly">공유로 종결 입력</button>
     </div>
+    <div id="shareBox" hidden>
+      <hr class="hr">
+      <h4 style="margin:0 0 .4rem">직원 공유 (팀장 이상)</h4>
+      <label class="check"><input type="checkbox" id="dShared"> 공유 사례로 올리기 (직원 누구나 볼 수 있어요)</label>
+      <div id="shareFields" hidden>
+        <div class="notice small">원문은 공개되지 않고, 아래 두 문장만 공개됩니다. 이름·병실·등록번호처럼 누구인지 알 수 있는 표현은 지우고 다듬어주세요.</div>
+        <label class="field">상황 요약 (공개)
+          <textarea id="dShareText" maxlength="300"></textarea></label>
+        <label class="field">이렇게 바꿨어요 (공개, 선택)
+          <textarea id="dShareResult" maxlength="300"></textarea></label>
+      </div>
+    </div>
     <p class="err" id="dErr" hidden></p>
     <div class="actions">
       <button type="button" class="btn primary" id="dSave">저장</button>
@@ -307,11 +323,11 @@ textarea{width:100%;min-height:5rem;resize:vertical}
     forwarded: { t: '타부서 전달', c: 's-fwd' }, done: { t: '완료', c: 's-done' }
   };
   const TARGET = { patient: '환자', staff: '직원', facility: '시설·장비' };
-  const FIELD = { status: '상태', action_note: '대책·조치', action_owner: '담당자', forwarded_to: '전달 부서', forwarded_at: '전달 시각', handled_at: '완료 시각' };
+  const FIELD = { status: '상태', action_note: '대책·조치', action_owner: '담당자', forwarded_to: '전달 부서', forwarded_at: '전달 시각', handled_at: '완료 시각', shared: '직원 공유', share_text: '공유 요약', share_result: '공유 조치 문구' };
   const SHARE_ONLY = '공유로 종결';
 
   const S = { sb: null, role: null, places: [], types: [], reports: [], pl: {}, ty: {}, loadedAt: null, truncated: false,
-    f: { period: 'all', room: '', type: '', status: '', harm: '', place: '' }, openId: null };
+    f: { period: 'all', room: '', type: '', status: '', harm: '', place: '', shared: '' }, openId: null };
 
   /* ---------- 시간 (KST) ---------- */
   const FMT = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -349,6 +365,8 @@ textarea{width:100%;min-height:5rem;resize:vertical}
   const tyName = (id) => (S.ty[id] ? S.ty[id].name : '(없는 유형)');
   const placeText = (r) => plName(r.room_id) + (r.place_id !== r.room_id ? ' · ' + plName(r.place_id) : '');
   const isDone = (r) => r.status === 'done';
+  const hasId = (s) => !!s && (/\d{6,}/.test(s) || /01[016789][-\s]?\d{3,4}[-\s]?\d{4}/.test(s));
+  const canShareRole = () => !!S.role && (S.role.role === 'team_lead' || S.role.role === 'hospital_admin');
 
   function visibleRooms() {
     const tops = S.places.filter((p) => !p.parent_id);
@@ -434,6 +452,8 @@ textarea{width:100%;min-height:5rem;resize:vertical}
       if (f.status && f.status !== 'open' && r.status !== f.status) return false;
       if (f.harm === 'yes' && !r.harm) return false;
       if (f.harm === 'no' && r.harm) return false;
+      if (f.shared === 'yes' && !r.shared) return false;
+      if (f.shared === 'no' && r.shared) return false;
       return true;
     });
   }
@@ -460,7 +480,7 @@ textarea{width:100%;min-height:5rem;resize:vertical}
         type: 'button', class: 'alert-btn',
         text: groupLabel(x) + ' ' + x.count + '건 (미조치 ' + x.open + ')',
         onclick: () => {
-          S.f.place = x.place; S.f.type = x.type; S.f.period = '90'; S.f.room = ''; S.f.status = ''; S.f.harm = '';
+          S.f.place = x.place; S.f.type = x.type; S.f.period = '90'; S.f.room = ''; S.f.status = ''; S.f.harm = ''; S.f.shared = '';
           syncFilterUI(); renderList(); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }));
@@ -470,7 +490,7 @@ textarea{width:100%;min-height:5rem;resize:vertical}
 
   function syncFilterUI() {
     $('fPeriod').value = S.f.period; $('fRoom').value = S.f.room; $('fType').value = S.f.type;
-    $('fStatus').value = S.f.status; $('fHarm').value = S.f.harm;
+    $('fStatus').value = S.f.status; $('fHarm').value = S.f.harm; $('fShared').value = S.f.shared;
     $('fClear').hidden = !S.f.place;
   }
 
@@ -491,7 +511,8 @@ textarea{width:100%;min-height:5rem;resize:vertical}
             h('span', { class: 'tag', text: placeText(r) }),
             h('span', { class: 'tag type', text: tyName(r.type_id) }),
             h('span', { class: 'tag type', text: TARGET[r.target] || '' }),
-            r.harm ? h('span', { class: 'tag harm', text: '피해 있음' }) : null),
+            r.harm ? h('span', { class: 'tag harm', text: '피해 있음' }) : null,
+            r.shared ? h('span', { class: 'tag share', text: '직원 공유' }) : null),
           h('div', { class: 'sit', text: r.situation })),
         h('div', null, h('span', { class: 'chip ' + st.c, text: st.t }))));
     });
@@ -515,6 +536,11 @@ textarea{width:100%;min-height:5rem;resize:vertical}
     $('dNote').value = r.action_note || '';
     $('dOwner').value = r.action_owner || '';
     $('fwdWrap').hidden = r.status !== 'forwarded';
+    $('shareBox').hidden = !(canShareRole() && ('shared' in r));
+    $('dShared').checked = !!r.shared;
+    $('dShareText').value = r.share_text || '';
+    $('dShareResult').value = r.share_result || '';
+    $('shareFields').hidden = !r.shared;
     $('dErr').hidden = true;
     $('modal').classList.add('on');
     $('dTitle').focus();
@@ -525,6 +551,7 @@ textarea{width:100%;min-height:5rem;resize:vertical}
   function changeText(k, pair) {
     const fmtv = (v) => {
       if (v == null || v === '') return '(없음)';
+      if (k === 'shared') return v ? '공유' : '해제';
       if (k === 'status') return (STATUS[v] || {}).t || v;
       if (k === 'forwarded_at' || k === 'handled_at') return kst(v);
       return v;
@@ -558,7 +585,15 @@ textarea{width:100%;min-height:5rem;resize:vertical}
       action_owner: clean($('dOwner').value),
       forwarded_to: $('dStatus').value === 'forwarded' ? clean($('dFwd').value) : (r.forwarded_to || null)
     };
+    const sharing = canShareRole() && ('shared' in r);
+    if (sharing) {
+      patch.shared = $('dShared').checked;
+      patch.share_text = clean($('dShareText').value);
+      patch.share_result = clean($('dShareResult').value);
+    }
     const err = $('dErr'); err.hidden = true;
+    if (sharing && patch.shared && !patch.share_text) { err.textContent = '공유하려면 상황 요약 문장을 적어주세요.'; err.hidden = false; return; }
+    if (sharing && patch.shared && (hasId(patch.share_text) || hasId(patch.share_result))) { err.textContent = '등록번호·전화번호로 보이는 숫자는 공유 문장에 쓸 수 없어요.'; err.hidden = false; return; }
     if (patch.status === 'forwarded' && !patch.forwarded_to) { err.textContent = '전달한 부서를 적어주세요.'; err.hidden = false; return; }
     if (patch.status === 'done' && !patch.action_note) { err.textContent = '완료로 바꾸려면 대책·조치 내용을 적어주세요. (단건이면 “공유로 종결”)'; err.hidden = false; return; }
     const btn = $('dSave'); btn.disabled = true; btn.textContent = '저장 중…';
@@ -572,7 +607,9 @@ textarea{width:100%;min-height:5rem;resize:vertical}
       toast('저장했습니다');
       loadHistory(r.id);
     } catch (e) {
-      err.textContent = (e && e.code === 'PGRST116') ? '수정 권한이 없거나 이미 바뀐 보고예요. 새로고침 후 다시 확인해주세요.'
+      err.textContent = (e && e.code === 'P0001' && e.message) ? e.message
+        : (e && (e.code === '42703' || e.code === 'PGRST204')) ? '공유 기능용 DB 업데이트(schema_shared.sql)를 먼저 실행해주세요.'
+        : (e && e.code === 'PGRST116') ? '수정 권한이 없거나 이미 바뀐 보고예요. 새로고침 후 다시 확인해주세요.'
         : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.';
       err.hidden = false;
     } finally { btn.disabled = false; btn.textContent = '저장'; }
@@ -606,14 +643,15 @@ textarea{width:100%;min-height:5rem;resize:vertical}
     const spans = done.filter((r) => r.handled_at).map((r) => (new Date(r.handled_at) - new Date(r.created_at)) / DAY);
     return {
       total: total, near: rs.filter((r) => !r.harm).length, harm: rs.filter((r) => r.harm).length,
-      done: done.length, rate: total ? Math.round((done.length / total) * 100) : 0,
+      done: done.length, rate: total ? Math.round((done.length / total) * 100) : 0, shared: rs.filter((r) => r.shared).length,
       avgDays: spans.length ? (spans.reduce((a, b) => a + b, 0) / spans.length) : null
     };
   }
 
   function kpiTiles(s) {
     return [['접수 건수', s.total + '건'], ['아차사고(피해 없음)', s.near + '건'], ['피해 있음', s.harm + '건'],
-      ['조치 완료율', s.rate + '%'], ['평균 처리 기간', s.avgDays == null ? '-' : (s.avgDays < 1 ? '1일 미만' : s.avgDays.toFixed(1) + '일')]];
+      ['조치 완료율', s.rate + '%'], ['평균 처리 기간', s.avgDays == null ? '-' : (s.avgDays < 1 ? '1일 미만' : s.avgDays.toFixed(1) + '일')],
+      ['직원 공유 사례', s.shared + '건']];
   }
 
   function renderStats() {
@@ -743,10 +781,10 @@ textarea{width:100%;min-height:5rem;resize:vertical}
     $('refreshBtn').addEventListener('click', refresh);
 
     document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
-    const map = { fPeriod: 'period', fRoom: 'room', fType: 'type', fStatus: 'status', fHarm: 'harm' };
+    const map = { fPeriod: 'period', fRoom: 'room', fType: 'type', fStatus: 'status', fHarm: 'harm', fShared: 'shared' };
     // 필터를 직접 바꾸면 반복 알림으로 걸어둔 장소 필터는 풀림
     Object.keys(map).forEach((id) => $(id).addEventListener('change', (e) => { S.f[map[id]] = e.target.value; S.f.place = ''; syncFilterUI(); renderList(); }));
-    $('fClear').addEventListener('click', () => { S.f = { period: 'all', room: '', type: '', status: '', harm: '', place: '' }; syncFilterUI(); renderList(); });
+    $('fClear').addEventListener('click', () => { S.f = { period: 'all', room: '', type: '', status: '', harm: '', place: '', shared: '' }; syncFilterUI(); renderList(); });
     $('sPeriod').addEventListener('change', renderStats);
     $('mSel').addEventListener('change', renderMonth);
     $('printBtn').addEventListener('click', () => window.print());
@@ -755,6 +793,15 @@ textarea{width:100%;min-height:5rem;resize:vertical}
 
     $('dStatus').addEventListener('change', (e) => { $('fwdWrap').hidden = e.target.value !== 'forwarded'; });
     $('shareOnly').addEventListener('click', () => { $('dNote').value = SHARE_ONLY; $('dStatus').value = 'done'; $('fwdWrap').hidden = true; });
+    $('dShared').addEventListener('change', (e) => {
+      $('shareFields').hidden = !e.target.checked;
+      if (!e.target.checked) return;
+      const r = S.reports.find((x) => x.id === S.openId);
+      if (!r) return;
+      if (!$('dShareText').value.trim()) $('dShareText').value = r.situation;      // 원문 → 관리자가 다듬어서 공개
+      const note = ($('dNote').value || r.action_note || '').trim();
+      if (!$('dShareResult').value.trim() && note && note !== SHARE_ONLY) $('dShareResult').value = note;
+    });
     $('dSave').addEventListener('click', saveDetail);
     $('dClose').addEventListener('click', closeDetail);
     $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) closeDetail(); });
