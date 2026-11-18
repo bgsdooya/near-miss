@@ -40,6 +40,7 @@ h1{font-size:1.5rem;margin:.4rem 0 .2rem;color:var(--brand-dark)}
 .opt-tag{font-size:.8rem;font-weight:500;color:var(--muted)}
 .opts{display:grid;gap:8px}
 .opts.two{grid-template-columns:1fr 1fr}
+.helper{margin:.6rem 0 0;font-size:.85rem;color:var(--muted);line-height:1.45}
 .opts.one{grid-template-columns:1fr}
 .opts.one .opt{justify-content:flex-start;text-align:left;padding:.55rem .8rem;gap:.7rem}
 .opts.one .opt .ico{font-size:1.4rem;width:1.8rem;text-align:center}
@@ -165,6 +166,7 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
       <section class="card" id="s-harm">
         <h2><span class="n">4</span> 실제 피해가 있었나요?</h2>
         <div class="opts two" id="harmOpts" role="radiogroup" aria-label="피해 여부"></div>
+        <p class="helper">다치거나 응급호출(코드블루)·추가 처치가 있었다면 '피해 있음'이에요.<br>예: 골절, 화상·습진 발생, 기립성저혈압으로 쓰러짐</p>
         <div class="warn" id="harmWarn" hidden>
           <strong>이미 피해가 생긴 일은 아차사고가 아니에요.</strong><br>낙상보고 등 병원의 기존 사고 보고체계로 보고해주세요. 이 화면에는 올라가지 않아요.
         </div>
