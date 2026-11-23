@@ -126,8 +126,8 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
   <main>
     <h1>아차사고 공유</h1>
     <p class="lead">보고는 잘못이 아니라 팀을 지키는 일입니다. 30초면 됩니다.</p>
-    <a class="casesbtn" id="casesLink" href="cases.html" hidden>
-      <span><span id="casesCount">공유 사례 보기</span><small>다른 곳에서 있었던 일과 바뀐 점</small></span>
+    <a class="casesbtn" id="casesLink" href="cases.html">
+      <span><span id="casesCount">공유 사례 보기</span><small id="casesSub">다른 곳에서 있었던 일과 바뀐 점</small></span>
       <span class="go" aria-hidden="true">→</span>
     </a>
 
@@ -569,14 +569,14 @@ details summary{min-height:3rem;display:flex;align-items:center;cursor:pointer;f
     loadCasesCount();
   }
 
-  /* 공유 사례가 1건 이상일 때만 상단 버튼을 보여줌 (실패해도 입력엔 영향 없음) */
+  /* 상단 공유 사례 버튼은 항상 보이고, 건수만 채워 넣음 (실패해도 입력엔 영향 없음) */
   async function loadCasesCount() {
     try {
       const res = await sb.rpc('get_shared_cases', { p_limit: 200 });
-      if (res.error || !Array.isArray(res.data) || !res.data.length) return;
+      if (res.error || !Array.isArray(res.data)) return;
       const n = res.data.length;
+      if (!n) { $('casesSub').textContent = '아직 공유된 사례가 없어요. 곧 올라와요'; return; }
       $('casesCount').textContent = '공유 사례 ' + n + (n >= 200 ? '건 이상' : '건') + ' 보기';
-      $('casesLink').hidden = false;
     } catch (e) { /* 무시 */ }
   }
 
